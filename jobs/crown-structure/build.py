@@ -1,4 +1,4 @@
-"""CROWN management and research structure, rebuilt from source/original.jpg.
+"""CROWN management and research structure, rebuilt from source/original.png.
 
 Changes from the source:
   - "Industrial Liasson Officer" -> "Industrial Liaison Officer" (spelling)

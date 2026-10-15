@@ -11,7 +11,7 @@ This repo hands the rebuild to Claude. You give it the image the requester sent.
 
 | What came in | What came back |
 |---|---|
-| ![AI-made org chart as received](jobs/crown-structure/source/original.jpg) | ![The same chart rebuilt in NMSU brand](jobs/crown-structure/out/CROWN_structure_NMSU.png) |
+| ![AI-made org chart as received](jobs/crown-structure/source/original.png) | ![The same chart rebuilt in NMSU brand](jobs/crown-structure/out/CROWN_structure_NMSU.png) |
 
 The only content change was one spelling fix, "Liasson" to "Liaison". Everything else was rebuilt:
 
