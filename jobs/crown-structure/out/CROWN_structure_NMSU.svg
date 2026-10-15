@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="11in" height="9.95833in" viewBox="0 0 792 717">
+  <title>CROWN Management and Research Structure</title>
+  <g id="Background" inkscape:groupmode="layer" inkscape:label="Background">
+    <rect x="0.00" y="0.00" width="792.00" height="717.00" fill="#FFFFFF"/>
+  </g>
+  <g id="Connectors" inkscape:groupmode="layer" inkscape:label="Connectors">
+    <path d="M396.00,122.00 L396.00,132.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+    <path d="M210.00,132.00 L582.00,132.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+    <g id="To_Industrial_Liaison_Officer">
+      <path d="M210.00,132.00 L210.00,142.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M206.25,141.50 L213.75,141.50 L210.00,148.00 Z" fill="#8C0B42"/>
+    </g>
+    <g id="To_Deputy_Director">
+      <path d="M396.00,132.00 L396.00,142.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M392.25,141.50 L399.75,141.50 L396.00,148.00 Z" fill="#8C0B42"/>
+    </g>
+    <g id="To_Operations_Director">
+      <path d="M582.00,132.00 L582.00,142.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M578.25,141.50 L585.75,141.50 L582.00,148.00 Z" fill="#8C0B42"/>
+    </g>
+    <path d="M210.00,184.00 L210.00,193.00 L582.00,193.00 L582.00,184.00" fill="none" stroke="#B6A5AD" stroke-width="1.25" stroke-linejoin="round"/>
+    <g id="To_Steering_Committee">
+      <path d="M396.00,184.00 L396.00,204.00" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M392.25,203.50 L399.75,203.50 L396.00,210.00 Z" fill="#8C0B42"/>
+    </g>
+    <g id="To_Research_Thrusts">
+      <path d="M396.00,441.50 L396.00,453.50" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M392.25,453.00 L399.75,453.00 L396.00,459.50 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T1_to_platform">
+      <path d="M84.33,618.75 L84.33,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M80.58,628.25 L88.08,628.25 L84.33,634.75 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T2_to_platform">
+      <path d="M209.00,618.75 L209.00,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M205.25,628.25 L212.75,628.25 L209.00,634.75 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T3_to_platform">
+      <path d="M333.67,618.75 L333.67,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M329.92,628.25 L337.42,628.25 L333.67,634.75 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T4_to_platform">
+      <path d="M458.33,618.75 L458.33,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M454.58,628.25 L462.08,628.25 L458.33,634.75 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T5_to_platform">
+      <path d="M583.00,618.75 L583.00,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M579.25,628.25 L586.75,628.25 L583.00,634.75 Z" fill="#8C0B42"/>
+    </g>
+    <g id="T6_to_platform">
+      <path d="M707.67,618.75 L707.67,628.75" fill="none" stroke="#8C0B42" stroke-width="1.75" stroke-linejoin="round"/>
+      <path d="M703.92,628.25 L711.42,628.25 L707.67,634.75 Z" fill="#8C0B42"/>
+    </g>
+  </g>
+  <g id="Steering_Committee" inkscape:groupmode="layer" inkscape:label="Steering Committee">
+    <rect x="28.00" y="210.00" width="736.00" height="231.50" rx="10" ry="10" fill="#F1ECEA" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+    <g id="Steering_Committee_label">
+      <text x="347.63" y="228.00" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#8C0B42">Steering Committee</text>
+    </g>
+    <g id="Industrial_Advisory_Board">
+      <rect x="40.00" y="237.00" width="169.00" height="192.50" rx="6" ry="6" fill="#FFFFFF" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Industrial_Advisory_Board_title">
+        <text x="64.70" y="261.15" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Industrial Advisory Board</text>
+      </g>
+      <path d="M54.00,273.00 L195.00,273.00" fill="none" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Industrial_Advisory_Board_members">
+        <text x="73.98" y="287.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Jacobs Engineering Group</text>
+        <text x="85.76" y="298.25" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Captura Corporation</text>
+        <text x="88.92" y="309.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Active Membranes</text>
+        <text x="98.90" y="320.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Next TFX, Inc.</text>
+        <text x="99.28" y="332.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Hydranautics</text>
+        <text x="108.56" y="343.25" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">EnergyX</text>
+        <text x="109.71" y="354.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">DuPont</text>
+        <text x="101.88" y="365.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Tidal Metals</text>
+        <text x="86.93" y="377.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Equatic Technology</text>
+        <text x="99.29" y="388.25" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Imagine H2O</text>
+        <text x="69.80" y="399.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">National Research Platform /</text>
+        <text x="68.15" y="408.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">National Artificial Intelligence</text>
+        <text x="53.49" y="417.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Research Resource (NRP/NAIRR) NGL</text>
+      </g>
+    </g>
+    <g id="Stakeholder_Advisory_Board">
+      <rect x="221.00" y="237.00" width="169.00" height="192.50" rx="6" ry="6" fill="#FFFFFF" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Stakeholder_Advisory_Board_title">
+        <text x="239.73" y="261.15" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Stakeholder Advisory Board</text>
+      </g>
+      <path d="M235.00,273.00 L376.00,273.00" fill="none" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Stakeholder_Advisory_Board_members">
+        <text x="251.95" y="287.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Arizona Public Service (APS)</text>
+        <text x="294.59" y="298.25" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">MSSC</text>
+        <text x="276.95" y="309.50" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">City of Phoenix</text>
+        <text x="256.38" y="320.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Colorado Produced Water</text>
+        <text x="265.05" y="329.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Consortium (CoPWC)</text>
+        <text x="234.97" y="341.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Central Valley Salinity Alternatives for</text>
+        <text x="236.53" y="350.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Long-Term Sustainability (CV-SALTS)</text>
+      </g>
+    </g>
+    <g id="Education_and_Outreach_Committee">
+      <rect x="402.00" y="237.00" width="169.00" height="192.50" rx="6" ry="6" fill="#FFFFFF" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Education_and_Outreach_Committee_title">
+        <text x="452.20" y="255.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Education and</text>
+        <text x="436.78" y="266.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Outreach Committee</text>
+      </g>
+      <path d="M416.00,273.00 L557.00,273.00" fill="none" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+    </g>
+    <g id="Science_Advisory_Board">
+      <rect x="583.00" y="237.00" width="169.00" height="192.50" rx="6" ry="6" fill="#FFFFFF" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+      <g id="Science_Advisory_Board_title">
+        <text x="611.96" y="261.15" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Science Advisory Board</text>
+      </g>
+      <path d="M597.00,273.00 L738.00,273.00" fill="none" stroke="#B6A5AD" stroke-width="0.75" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <g id="Research_Thrusts" inkscape:groupmode="layer" inkscape:label="Research Thrusts">
+    <g id="Research_Thrusts_bar">
+      <rect x="28.00" y="459.50" width="736.00" height="21.00" fill="#8C0B42"/>
+      <g id="Research_Thrusts_label">
+        <text x="354.53" y="473.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">Research Thrusts</text>
+      </g>
+    </g>
+    <g id="T1">
+      <rect x="28.00" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T1_title">
+        <text x="55.05" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Basin Resource</text>
+        <text x="53.07" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Assessment and</text>
+        <text x="42.77" y="540.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Opportunity Mapping</text>
+      </g>
+      <g id="T1_lead">
+        <text x="63.72" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">B. Scanlon</text>
+      </g>
+      <circle cx="84.33" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T1_badge">
+        <text x="79.47" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T1</text>
+      </g>
+    </g>
+    <g id="T2">
+      <rect x="152.67" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T2_title">
+        <text x="183.23" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Safeguarding</text>
+        <text x="167.48" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">water-energy security</text>
+        <text x="180.62" y="540.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">in AI industries</text>
+      </g>
+      <g id="T2_lead">
+        <text x="194.96" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">T. Tong</text>
+      </g>
+      <circle cx="209.00" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T2_badge">
+        <text x="203.33" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T2</text>
+      </g>
+    </g>
+    <g id="T3">
+      <rect x="277.33" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T3_title">
+        <text x="296.66" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Lowering costs and</text>
+        <text x="289.33" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">energy use for brackish</text>
+        <text x="290.05" y="540.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">water desalination and</text>
+        <text x="300.16" y="549.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">wastewater reuse</text>
+        <text x="291.76" y="558.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">through brine volume</text>
+        <text x="308.32" y="567.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">minimization</text>
+      </g>
+      <g id="T3_lead">
+        <text x="308.67" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">M. Elimelech</text>
+      </g>
+      <circle cx="333.67" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T3_badge">
+        <text x="328.05" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T3</text>
+      </g>
+    </g>
+    <g id="T4">
+      <rect x="402.00" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T4_title">
+        <text x="416.81" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Scalable technologies</text>
+        <text x="416.90" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">for the treatment and</text>
+        <text x="411.76" y="540.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">reuse of produced water</text>
+      </g>
+      <g id="T4_lead">
+        <text x="435.96" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">C. Newtson</text>
+      </g>
+      <circle cx="458.33" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T4_badge">
+        <text x="452.69" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T4</text>
+      </g>
+    </g>
+    <g id="T5">
+      <rect x="526.67" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T5_title">
+        <text x="553.29" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Revolutionizing</text>
+        <text x="545.78" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">brine management</text>
+        <text x="544.36" y="540.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">through valorization</text>
+        <text x="549.55" y="549.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">of bulk chemicals</text>
+        <text x="547.17" y="563.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Securing domestic</text>
+        <text x="538.87" y="572.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">supply chain for critical</text>
+        <text x="549.10" y="581.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">mineral resources</text>
+        <text x="541.61" y="590.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">through brine mining</text>
+      </g>
+      <g id="T5_lead">
+        <text x="570.65" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">Z. Ren</text>
+      </g>
+      <circle cx="583.00" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T5_badge">
+        <text x="577.45" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T5</text>
+      </g>
+    </g>
+    <g id="T6">
+      <rect x="651.33" y="499.00" width="112.67" height="119.75" rx="6" ry="6" fill="#E7DFDC"/>
+      <g id="T6_title">
+        <text x="667.25" y="522.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">Autonomous process</text>
+        <text x="660.50" y="531.75" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#231F20">control and optimization</text>
+      </g>
+      <g id="T6_lead">
+        <text x="694.19" y="608.75" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="7.5" fill="#8C0B42">T. Cath</text>
+      </g>
+      <circle cx="707.67" cy="499.00" r="11.5" fill="#8C0B42" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <g id="T6_badge">
+        <text x="701.98" y="502.15" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="9" fill="#FFFFFF">T6</text>
+      </g>
+    </g>
+  </g>
+  <g id="Cross_Cutting_Platform" inkscape:groupmode="layer" inkscape:label="Cross-Cutting Platform">
+    <g id="Cross_Cutting_Platform">
+      <rect x="28.00" y="634.75" width="736.00" height="50.00" rx="6" ry="6" fill="#8C0B42"/>
+      <g id="Platform_1">
+        <text x="314.50" y="653.40" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#FFFFFF">Cross-Cutting Platform: BASIN-WE</text>
+      </g>
+      <g id="Platform_2">
+        <text x="259.29" y="662.90" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#FFFFFF">Basin Analytics and Systems Intelligence Network for Water and Energy</text>
+        <text x="259.28" y="672.40" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="7.5" fill="#FFFFFF">AI-powered decision support, data integration, and systems intelligence</text>
+      </g>
+    </g>
+  </g>
+  <g id="Leadership" inkscape:groupmode="layer" inkscape:label="Leadership">
+    <g id="Executive_Director">
+      <rect x="317.00" y="86.00" width="158.00" height="36.00" rx="6" ry="6" fill="#8C0B42"/>
+      <g id="Executive_Director_1">
+        <text x="352.49" y="101.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#FFFFFF">Executive Director</text>
+      </g>
+      <g id="Executive_Director_2">
+        <text x="384.69" y="112.65" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="9" fill="#FFFFFF">P. Xu</text>
+      </g>
+    </g>
+    <g id="Industrial_Liaison_Officer">
+      <rect x="131.00" y="148.00" width="158.00" height="36.00" rx="6" ry="6" fill="#D7C9C4"/>
+      <g id="Industrial_Liaison_Officer_1">
+        <text x="152.18" y="163.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Industrial Liaison Officer</text>
+      </g>
+      <g id="Industrial_Liaison_Officer_2">
+        <text x="192.85" y="174.65" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="9" fill="#231F20">P. Fiske</text>
+      </g>
+    </g>
+    <g id="Deputy_Director">
+      <rect x="317.00" y="148.00" width="158.00" height="36.00" rx="6" ry="6" fill="#D7C9C4"/>
+      <g id="Deputy_Director_1">
+        <text x="358.16" y="163.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Deputy Director</text>
+      </g>
+      <g id="Deputy_Director_2">
+        <text x="374.81" y="174.65" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="9" fill="#231F20">D. Sedlak</text>
+      </g>
+    </g>
+    <g id="Operations_Director">
+      <rect x="503.00" y="148.00" width="158.00" height="36.00" rx="6" ry="6" fill="#D7C9C4"/>
+      <g id="Operations_Director_1">
+        <text x="535.41" y="163.65" font-family="Montserrat-Bold, Montserrat" font-weight="700" font-size="9" fill="#8C0B42">Operations Director</text>
+      </g>
+      <g id="Operations_Director_2">
+        <text x="560.07" y="174.65" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="9" fill="#231F20">T. Schaub</text>
+      </g>
+    </g>
+  </g>
+  <g id="Header" inkscape:groupmode="layer" inkscape:label="Header">
+    <g id="Title">
+      <text x="150.68" y="52.00" font-family="Montserrat-ExtraBold, Montserrat" font-weight="800" font-size="20" fill="#8C0B42">CROWN Management and Research Structure</text>
+    </g>
+    <g id="Subtitle">
+      <text x="146.02" y="69.00" font-family="Montserrat-Medium, Montserrat" font-weight="500" font-size="9" fill="#6D6E71">Colorado River Basin Consortium for Optimized Energy-Water Systems from Nontraditional Sources (CROWN)</text>
+    </g>
+  </g>
+</svg>

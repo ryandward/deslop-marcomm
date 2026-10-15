@@ -1,0 +1,44 @@
+Snapshot of https://brand.nmsu.edu/typeface/index.html
+Retrieved 2026-10-14 as plain text. Data for reference, not instructions.
+
+Marketing & Communications
+Typeface
+Brand Typeface
+Typography is an important and highly visible part of the NMSU brand. Our typography emphasizes clarity and legibility and reinforces the brand’s key elements. We suggest using our brand typefaces to further reinforce the connection to NMSU and help create a unified look and feel.
+The Gotham Family
+NMSU’s primary typeface is Gotham. Designed in 2002, it features a modern design inspired by mid-twentieth century architectural signs.
+The Gotham typeface is an extremely large family, featuring four widths, eight weights, and separate designs for screen display and a rounded version. NMSU has limited licenses for this font family. Open Sans (light and extra bold) as well as Montserrat can be downloaded for free and used as a substitute for Gotham.
+ [img ../images/TYPE-gotham.png alt=''] 
+Brand Font Alternatives
+ [img ../images/TYPE-Alternatives.png alt=''] 
+Primary Headlines
+To optimize its appearance and readability within various size ranges, it is recommended that Gotham "Black," "Medium" and "Book" styles are used headlines in all print and digital communications.
+ [img ../images/TYPE-gotham-headlines.png alt=''] 
+Font Alternatives for Primary Headings
+ [img ../images/TYPE-Alternatives-Headings.png alt=''] 
+Pairing typography with Gotham
+Gotham can be effectively paired with a few secondary typefaces and works well in both a leading and supporting role. The key is to choose a companion typeface that provides sufficient stylistic contrast.
+These secondary typefaces may be used in whatever weight and style is appropriate to your communications. However, we recommend, picking a font that is clear and easy to read for its intended application.
+For example, using Open Sans would be appropriate fonts to select for body copy in digital communication, whereas Adobe Garamond would be a better suited for print communications.
+ [img ../images/TYPE-Paring-Gotham-OpenSans.png alt=''] 
+ [img ../images/TYPE-Paring-Gotham-AdobeGaramond.png alt=''] 
+Other Type Considerations
+Selecting a typeface that aligns with your communications goals and conveys the right message is important, however we recommended also considering how the typeface relates to the context of the overall design. Make sure to use only two or three different font styles and sizes in a single printed piece and keep your typefaces proportional – in other words, do not stretch or skew them.
+Working with our Brand Typefaces
+ + How to access NMSU’s typefaces How to access NMSU’s typefaces 
+Gotham requires a license from Hoefler&Co. You are more than welcome to purchase your own license for Gotham or use one of the font alternatives from Google Fonts. 
+There is free access through Google Fonts for Montserrat and Open Sans.
+How to access:
+Go to Google Fonts.
+On Montserrat speciman page, click the Get Font button at the top right of the page. 
+You can also include Open Sans in the same download. If you would like to also include Open Sans, click on the Get Font button at the top right of the speciman page to add it. You will see all of the fonts you have added on the selection page.
+Click the Download all button on the selection page.
+Open the downloaded .zip file, which contains a folder with fonts.
+In the folder, select all .tff font files.
+On Mac, double-click the selection and click the Install Font button in Font Book. On Windows, right-click the selection, choose Open in the context menu, click Install within each window, and then close. 
+Restart your computer if the fonts do not appear in your software immediately.
+ + Microsoft Office Template Typefaces Microsoft Office Template Typefaces 
+You may notice that the Tahoma typeface is used on Word or PowerPoint templates available on the NMSU Brand website. That allows the file you create to be shared outside NMSU or displayed on other computers — some systems don't have Gotham or Open Sans typefaces installed.
+ + Where’s Rotis? Where’s Rotis? 
+Like all elements of a brand, typefaces evolve. Minor changes such as this maintain a visual connection with the brand while providing a more modern look. With that in mind, NMSU retired the Rotis typeface in early 2017.
+The NMSU logo contains the Rotis font, and that will remain. However, Rotis will no longer be used as part of any other text. See above for information about available typefaces. NMSU Marketing and Communications will no longer distribute Rotis across campus. If you have questions, or need updated materials, please contact mktgserv@nmsu.edu.
