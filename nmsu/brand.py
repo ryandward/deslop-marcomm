@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Literal
 
 ROOT = Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "brand" / "fonts"
@@ -106,9 +107,13 @@ def relative_luminance(rgb: tuple[int, int, int]) -> float:
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
 
 
-def contrast_ratio(a: Paint, b: Paint) -> float:
-    la, lb = sorted((relative_luminance(a.rgb), relative_luminance(b.rgb)), reverse=True)
+def contrast_rgb(a: tuple[int, int, int], b: tuple[int, int, int]) -> float:
+    la, lb = sorted((relative_luminance(a), relative_luminance(b)), reverse=True)
     return (la + 0.05) / (lb + 0.05)
+
+
+def contrast_ratio(a: Paint, b: Paint) -> float:
+    return contrast_rgb(a.rgb, b.rgb)
 
 
 # ----------------------------------------------------------- typefaces ----
@@ -158,7 +163,61 @@ CONTRAST_NORMAL = 4.5     # WCAG 2.2 AA, which brand.nmsu.edu/color asks for
 CONTRAST_LARGE = 3.0
 LARGE_TEXT_PT = 18.0      # WCAG "large": 18pt, or 14pt bold
 LARGE_BOLD_TEXT_PT = 14.0
-MIN_TEXT_PT = 7.0         # HOUSE: smallest type we'll print
 FIT_MARGIN = 0.98         # HOUSE: a line may fill 98% of its box, so another
                           # Montserrat build (Adobe Fonts, older Google zip)
                           # can't push it over the edge
+
+
+# --------------------------------------------------------------- media ----
+
+class Medium(Enum):
+    """What a piece is for. It sets the units (points for print, pixels for
+    screens), how the preview PNG is rendered, and which minimums apply."""
+    PRINT = "print"
+    SCREEN = "screen"
+
+
+MIN_TEXT = {Medium.PRINT: 7.0, Medium.SCREEN: 16.0}   # HOUSE: 7 pt in print, 16 px on screens
+
+
+# ---------------------------------------------------------------- logos ----
+
+@dataclass(frozen=True)
+class LogoArt:
+    """One of NMSU's logo files, always placed exactly as provided.
+
+    box is the artwork's own bounds (x, y, w, h) in the file's units, which
+    can differ from its viewBox; the white setup's canvas runs well below its
+    artwork. s_height is the height of the S in "State", the unit NMSU
+    measures clear space in. Both were measured on 2026-10-15 with
+    `inkscape --query-all` and, for the crimson setup whose letters are cut
+    out of one shape, from a 960 dpi render.
+    """
+    file: Path
+    kind: Literal["setup", "mark"]
+    on_dark: bool          # the white versions, for crimson or dark backgrounds
+    box: tuple[float, float, float, float]
+    s_height: float
+    color: str             # the logo's main color, for checking it stands out
+
+    @property
+    def aspect(self) -> float:
+        return self.box[2] / self.box[3]
+
+
+LOGO_SETUP_CRIMSON = LogoArt(LOGO_DIR / "nmsu-vertical-setup-crimson.svg", "setup", False,
+                             (0.0, 0.0, 345.81, 213.89), 25.3, LOGO_CRIMSON)
+LOGO_SETUP_WHITE = LogoArt(LOGO_DIR / "nmsu-vertical-setup-white.svg", "setup", True,
+                           (0.1, -0.9, 98.7, 88.4), 12.2, "#FFFFFF")
+LOGOS: tuple[LogoArt, ...] = (LOGO_SETUP_CRIMSON, LOGO_SETUP_WHITE)
+
+# "Mark must be at least a half-inch high" in print and 75 px on screens;
+# setups "use above .4375 in tall" in print and 50 px on screens.
+LOGO_MIN_HEIGHT: dict[tuple[str, Medium], float] = {
+    ("mark", Medium.PRINT): 36.0, ("mark", Medium.SCREEN): 75.0,
+    ("setup", Medium.PRINT): 31.5, ("setup", Medium.SCREEN): 50.0,
+}
+LOGO_MIN_CONTRAST = 3.0    # HOUSE: WCAG's 3:1 for graphics, for "the greatest visibility"
+DARK_BACKGROUND = 0.25     # HOUSE: relative luminance under this takes the white logo
+
+QR_QUIET_MODULES = 4       # ISO/IEC 18004: four light modules on every side

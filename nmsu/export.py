@@ -8,16 +8,23 @@ rejected render stays in out_dir/.staging/ so we can look at what failed.
 
 from __future__ import annotations
 
+import base64
 import json
 import os
+import re
 import shutil
 import subprocess
+import xml.etree.ElementTree as ET
+from functools import cache
 from pathlib import Path as FilePath
 from xml.sax.saxutils import escape
 
-from .brand import FONT_DIR, GOTHAM_FOR, PALETTE, ROOT, WHITE_SANDS, Paint, Swatch
-from .layout import Circle, Group, Item, Path, Rect, Text, text_width
-from .lint import BrandViolation, Finding, lint_model, lint_render
+from .brand import FONT_DIR, GOTHAM_FOR, PALETTE, ROOT, WHITE_SANDS, LogoArt, Medium, Paint, Swatch
+from .layout import Circle, Group, Image, Item, Logo, Path, QRCode, Rect, Text, text_width
+from .lint import BrandViolation, Finding, flatten, lint_model, lint_render
+
+SVG_NS = "http://www.w3.org/2000/svg"
+ET.register_namespace("", SVG_NS)
 
 CACHE = ROOT / ".cache"
 MOCK = ROOT / "tools" / "illustrator_mock.js"
@@ -54,6 +61,21 @@ def _svg_item(it: Item, depth: int) -> list[str]:
     if isinstance(it, Path):
         d = "M" + " L".join(f"{x:.2f},{y:.2f}" for x, y in it.pts) + (" Z" if it.closed else "")
         return [f'{pad}<path d="{d}" {_paint_attrs(it.fill, it.stroke, it.sw)}/>']
+    if isinstance(it, Image):
+        # Embedded, so the SVG is one self-contained file to hand over.
+        data = base64.b64encode(it.file.read_bytes()).decode()
+        return [f'{pad}<image id="{_id(it.name)}" x="{it.x:.2f}" y="{it.y:.2f}" width="{it.w:.2f}" '
+                f'height="{it.h:.2f}" preserveAspectRatio="none" xlink:href="data:image/png;base64,{data}"/>']
+    if isinstance(it, Logo):
+        bx, by, _, bh = it.art.box
+        k = it.h / bh
+        return [f'{pad}<g id="{_id(it.name)}" transform="translate({it.x - bx * k:.3f} {it.y - by * k:.3f}) '
+                f'scale({k:.6f})">', _logo_markup(str(it.art.file)), f"{pad}</g>"]
+    if isinstance(it, QRCode):
+        out = [f'{pad}<g id="{_id(it.name)}">']
+        for module_run in it.rects():
+            out += _svg_item(module_run, depth + 1)
+        return out + [f"{pad}</g>"]
     # Each line is its own <text> at a measured left edge, so every renderer,
     # Illustrator included, puts it exactly where the lint measured it.
     # Illustrator matches the PostScript name; browsers fall through to the
@@ -67,6 +89,35 @@ def _svg_item(it: Item, depth: int) -> list[str]:
     return out + [f"{pad}</g>"]
 
 
+@cache
+def _logo_markup(path: str) -> str:
+    """A logo file's artwork as SVG markup, unchanged except that its CSS
+    classes become presentation attributes. NMSU's files each define their
+    own .cls-1, .st0 and so on, so inlining them as-is would let one logo's
+    classes recolor another's."""
+    root = ET.parse(path).getroot()
+    rules: dict[str, dict[str, str]] = {}
+    for style in root.iter(f"{{{SVG_NS}}}style"):
+        for selectors, body in re.findall(r"([^{}]+)\{([^}]*)\}", style.text or ""):
+            props = dict((k.strip(), v.strip()) for k, v in
+                         (decl.split(":", 1) for decl in body.split(";") if ":" in decl))
+            for sel in selectors.split(","):
+                if sel.strip().startswith("."):
+                    rules.setdefault(sel.strip()[1:], {}).update(props)
+    parts = []
+    for child in root:
+        if child.tag.split("}")[-1] in ("defs", "style", "title", "desc", "metadata"):
+            continue
+        for el in child.iter():
+            for cls in el.attrib.pop("class", "").split():
+                for k, v in rules.get(cls, {}).items():
+                    el.set(k, v)
+            el.attrib.pop("id", None)
+            el.attrib.pop("data-name", None)
+        parts.append(ET.tostring(child, encoding="unicode"))
+    return "".join(parts)
+
+
 def write_svg(path: FilePath, layers: list[Group], width: float, height: float, title: str) -> None:
     body: list[str] = []
     for layer in layers:
@@ -75,6 +126,7 @@ def write_svg(path: FilePath, layers: list[Group], width: float, height: float, 
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<svg xmlns="http://www.w3.org/2000/svg" '
         'xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" '
+        'xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'width="{width / 72:g}in" height="{height / 72:g}in" viewBox="0 0 {width:g} {height:g}">',
         f"  <title>{escape(title)}</title>",
         *body,
@@ -103,6 +155,14 @@ var PREFER_GOTHAM = false;
 __DATA__
 
 (function () {
+    // Photos and logos are linked from the assets folder next to this script.
+    var HERE = new File($.fileName).parent.fsName;
+    function asset(name) {
+        var f = new File(HERE + "/assets/" + name);
+        if (!f.exists) throw new Error("Can't find " + f.fsName + ". Keep the assets folder next to this script.");
+        return f;
+    }
+
     var savedCoords = app.coordinateSystem;
     app.coordinateSystem = CoordinateSystem.DOCUMENTCOORDINATESYSTEM;
 
@@ -176,6 +236,21 @@ __DATA__
             p.setEntirePath(pts);
             p.closed = it.closed;
             finish(p, it);
+        } else if (it.kind === "image") {
+            // Linked; embed it from the Links panel to make the .ai self-contained.
+            p = parent.placedItems.add();
+            p.file = asset(it.file);
+            p.name = it.name;
+            p.width = it.w;
+            p.height = it.h;
+            p.position = [X(it.x), Y(it.y)];
+        } else if (it.kind === "logo") {
+            // NMSU's own logo file, imported as vector art and only scaled.
+            var lg = parent.groupItems.createFromFile(asset(it.file));
+            lg.name = it.name;
+            lg.width = it.w;
+            lg.height = it.h;
+            lg.position = [X(it.x), Y(it.y)];
         } else if (it.kind === "text") {
             var t = parent.textFrames.pointText([X(it.cx), Y(it.y)]);
             t.contents = it.lines.join("\r");
@@ -237,6 +312,13 @@ def _jsx_item(it: Item) -> dict[str, object]:
     if isinstance(it, Path):
         return {"kind": "path", "name": it.name, "pts": [list(pt) for pt in it.pts], "closed": it.closed,
                 "fill": _paint_ref(it.fill), "stroke": _paint_ref(it.stroke), "sw": it.sw}
+    if isinstance(it, Image):
+        return {"kind": "image", "name": it.name, "file": it.file.name, "x": it.x, "y": it.y, "w": it.w, "h": it.h}
+    if isinstance(it, Logo):
+        return {"kind": "logo", "name": it.name, "file": it.art.file.name, "x": it.x, "y": it.y,
+                "w": it.w, "h": it.h}
+    if isinstance(it, QRCode):
+        return {"kind": "group", "name": it.name, "items": [_jsx_item(r) for r in it.rects()]}
     return {"kind": "text", "name": it.name, "lines": it.lines, "cx": it.cx, "y": it.y,
             "font": it.style.postscript, "size": it.style.size, "leads": it.leads(),
             "paint": _paint_ref(it.style.paint)}
@@ -265,6 +347,45 @@ def write_jsx(path: FilePath, layers: list[Group], width: float, height: float, 
     path.write_text(JSX_TEMPLATE.replace("__TITLE__", title.replace('"', "'")).replace("__DATA__", decls))
 
 
+# -------------------------------------------------------------- assets ----
+
+def _normalized_logo(art: LogoArt) -> str:
+    """The logo file with its canvas (viewBox) trimmed to the artwork and
+    every byte of the artwork itself left alone. Illustrator sizes an
+    imported SVG by its artwork, so this keeps the .jsx, the SVG and the
+    mock all measuring the same box."""
+    text = art.file.read_text()
+    bx, by, bw, bh = art.box
+    svg_tag = re.search(r"<svg\b[^>]*>", text)
+    assert svg_tag, art.file
+    tag = re.sub(r'viewBox="[^"]*"', f'viewBox="{bx:g} {by:g} {bw:g} {bh:g}"', svg_tag.group(0))
+    return text[:svg_tag.start()] + tag + text[svg_tag.end():]
+
+
+def write_assets(layers: list[Group], out: FilePath) -> list[FilePath]:
+    """Copy every photo and logo the design uses into out/, under the names
+    the Illustrator script links to."""
+    written: dict[str, FilePath] = {}
+    for _, it in flatten(layers):
+        if isinstance(it, Image):
+            name, src = it.file.name, it.file
+        elif isinstance(it, Logo):
+            name, src = it.art.file.name, it.art.file
+        else:
+            continue
+        if name in written:
+            if written[name] != src:
+                raise ValueError(f"two different assets are both named {name}")
+            continue
+        out.mkdir(parents=True, exist_ok=True)
+        if isinstance(it, Logo):
+            (out / name).write_text(_normalized_logo(it.art))
+        else:
+            shutil.copyfile(src, out / name)
+        written[name] = src
+    return [out / n for n in written]
+
+
 # -------------------------------------------------------------- render ----
 
 def _tool(name: str) -> str:
@@ -290,10 +411,15 @@ def _inkscape(svg: FilePath, out: FilePath, *extra: str) -> None:
                    env=font_env(), check=True, capture_output=True)
 
 
-def render(svg: FilePath, stem: str, out_dir: FilePath) -> list[FilePath]:
+def _png_size(medium: Medium, width: float) -> str:
+    """Screens get exactly one pixel per artboard unit; print previews 200 dpi."""
+    return f"--export-width={round(width)}" if medium is Medium.SCREEN else "--export-dpi=200"
+
+
+def render(svg: FilePath, stem: str, out_dir: FilePath, medium: Medium, width: float) -> list[FilePath]:
     pdf, png, gray = (out_dir / f"{stem}.pdf", out_dir / f"{stem}.png", out_dir / f"{stem}_grayscale.png")
     _inkscape(svg, pdf, "--export-type=pdf")
-    _inkscape(svg, png, "--export-type=png", "--export-dpi=200")
+    _inkscape(svg, png, "--export-type=png", _png_size(medium, width))
     # NMSU: "check that the design works in black and white". A person has
     # to judge that one, so we hand them the grayscale render to look at.
     subprocess.run([_tool("magick"), str(png), "-colorspace", "Gray", str(gray)], check=True)
@@ -308,21 +434,22 @@ def _pixels_differing(a: FilePath, b: FilePath) -> float:
     return float(res.stderr.split()[0])
 
 
-def verify_jsx(jsx: FilePath, svg: FilePath, work: FilePath) -> None:
+def verify_jsx(jsx: FilePath, svg: FilePath, work: FilePath, width: float) -> None:
     """Run the Illustrator script against a strict mock of Illustrator's DOM
     under both artboard coordinate conventions, redraw what it built, and
     require the result to match the SVG pixel for pixel (10% fuzz for
     anti-aliasing). The mock can only hold the script to our model of the
     Illustrator API; a real Illustrator run is still the final word."""
     ref = work / "verify_ref.png"
-    _inkscape(svg, ref, "--export-type=png", "--export-dpi=150")
+    size = f"--export-width={round(min(width * 150 / 72, 2400))}"
+    _inkscape(svg, ref, "--export-type=png", size)
     for mode in ("cc", "legacy"):
         rebuilt_svg, rebuilt_png = work / f"verify_{mode}.svg", work / f"verify_{mode}.png"
         res = subprocess.run([_tool("node"), str(MOCK), str(jsx), str(rebuilt_svg), mode],
                              capture_output=True, text=True)
         if res.returncode:
             raise RuntimeError(f"Illustrator script failed on the mock ({mode}):\n{res.stderr}")
-        _inkscape(rebuilt_svg, rebuilt_png, "--export-type=png", "--export-dpi=150", "--export-background=white")
+        _inkscape(rebuilt_svg, rebuilt_png, "--export-type=png", size, "--export-background=white")
         diff = _pixels_differing(ref, rebuilt_png)
         if diff:
             raise RuntimeError(f"Illustrator script ({mode} coordinates) draws something different from "
@@ -332,12 +459,12 @@ def verify_jsx(jsx: FilePath, svg: FilePath, work: FilePath) -> None:
 # ------------------------------------------------------------- publish ----
 
 def publish(layers: list[Group], *, width: float, height: float, out_dir: FilePath, stem: str,
-            title: str) -> None:
+            title: str, medium: Medium = Medium.PRINT) -> None:
     page = Group("Background", [Rect("Page", 0, 0, width, height, fill=Paint(WHITE_SANDS))],
                  layer=True, locked=True)
     layers = [page, *layers]
 
-    problems, model = lint_model(layers)
+    problems, model = lint_model(layers, medium)
     if problems:
         raise BrandViolation(problems)
 
@@ -348,20 +475,28 @@ def publish(layers: list[Group], *, width: float, height: float, out_dir: FilePa
     svg, jsx = staging / f"{stem}.svg", staging / f"{stem}_build.jsx"
     write_svg(svg, layers, width, height, title)
     write_jsx(jsx, layers, width, height, title)
-    rendered = render(svg, stem, staging)
+    assets = write_assets(layers, staging / "assets")
+    rendered = render(svg, stem, staging, medium, width)
 
-    problems, shares = lint_render(staging / f"{stem}.png", layers)
+    problems, shares = lint_render(staging / f"{stem}.png", layers, width)
     if problems:
         raise BrandViolation(problems + [Finding("rejected", str(staging), "render kept here to inspect")])
-    verify_jsx(jsx, svg, staging)
+    verify_jsx(jsx, svg, staging, width)
 
     for f in (svg, jsx, *rendered):
         f.replace(out_dir / f.name)
+    shutil.rmtree(out_dir / "assets", ignore_errors=True)
+    if assets:
+        (staging / "assets").replace(out_dir / "assets")
     shutil.rmtree(staging)
 
     print(f"published {title!r} to {out_dir}")
-    print(f"  artboard  {width:g} x {height:g} pt ({width / 72:.2f} x {height / 72:.2f} in)")
-    print(f"  type      sizes {model.sizes} pt, weights {model.weights}")
+    if medium is Medium.SCREEN:
+        print(f"  artboard  {width:g} x {height:g} px, for screens")
+    else:
+        print(f"  artboard  {width:g} x {height:g} pt ({width / 72:.2f} x {height / 72:.2f} in), for print")
+    unit = "px" if medium is Medium.SCREEN else "pt"
+    print(f"  type      sizes {model.sizes} {unit}, weights {model.weights}")
     print(f"  contrast  lowest text contrast {model.min_contrast:.2f}:1")
     print("  color     " + ", ".join(f"{s.name.removeprefix('NMSU ')} {v:.0%}"
                                       for s, v in sorted(shares.items(), key=lambda kv: -kv[1])))

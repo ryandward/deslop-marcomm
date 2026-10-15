@@ -28,7 +28,8 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
 ## Where things are
 
 - `nmsu/brand.py`: the palette, typefaces and rule thresholds, and the only place a color or font may come from
-- `nmsu/layout.py`: HarfBuzz text measurement plus the primitives `Rect`, `Circle`, `Path`, `Text`, `Group`, `arrow_down` and `centered_stack`
+- `nmsu/layout.py`: HarfBuzz text measurement plus the primitives `Rect`, `Circle`, `Path`, `Text`, `Image`, `Logo`, `QRCode`, `Group`, `arrow_down` and `centered_stack`
+- `nmsu/photo.py`: turns a requester's photo into a working copy we can place, without touching the original
 - `nmsu/lint.py`: the brand compiler
 - `nmsu/export.py`: the SVG writer, the Illustrator script writer, renders, and `publish()`
 - `nmsu/swatches.py`: writes `brand/swatches/` from the palette
@@ -42,7 +43,7 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
 
 ## Taking a new job
 
-1. Get a short job name and which unit sent the request. Make `jobs/<slug>/source/` and put exactly what came in there. Nothing in `source/` ever gets edited. Sources may be images, PDFs, slides or documents; read them however works.
+1. Get a short job name and which unit sent the request. Make `jobs/<slug>/source/` and put exactly what came in there. Nothing in `source/` ever gets edited. Sources may be images, PDFs, slides or documents; read them however works. `.gitattributes` sends everything in `source/` to Git LFS except `.md` and `.txt` files, so write the brief down as `request.md`.
 2. Transcribe the text into constants at the top of `build.py`. This is where AI slop does the most damage, so we go slowly:
    - Copy exactly what's there.
    - Fix only unambiguous misspellings of ordinary words, like "Liasson" to "Liaison". List every fix in the `build.py` docstring and in the report back.
@@ -50,11 +51,11 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
    - When text is unreadable, we ask. We don't fill it in from context.
    - Never add content the source doesn't have, whether that's a tagline, an icon that implies meaning, or an extra box.
 3. Check the format before building. We build single-page graphics here (charts, diagrams, flowcharts, posters, flyers), and they come out as Illustrator material. Multi-page documents belong in InDesign, which this toolkit can't produce yet, and we say so rather than forcing it. Reports and slide decks should start from NMSU's official Word and PowerPoint templates (see `BRAND.md`).
-4. Write `build.py` using `jobs/crown-structure/build.py` as the pattern:
+4. Write `build.py`. Use `jobs/crown-structure/build.py` as the pattern for print, and `jobs/commencement-welcome-fall-2026/build.py` for screens, logos, photos and QR codes:
    - content constants first
    - then a type scale of at most three sizes and three weights
    - then `build()`, which returns layers bottom to top
-   - then `publish()`
+   - then `publish()`, with `medium=Medium.SCREEN` for anything shown on a display, which switches units to pixels
 5. Run `.venv/bin/python jobs/<slug>/build.py`, read every finding, and fix the design.
 6. Look at `out/<stem>.png` and `out/<stem>_grayscale.png` with the Read tool before reporting anything. The lint can't judge alignment or balance, or whether the hierarchy still reads in grayscale.
 7. Report back in a few plain sentences:
@@ -73,7 +74,8 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
   - Gotham instead of Montserrat, if `PREFER_GOTHAM = true` is set at the top of the file on a machine that has it
 - `<stem>.svg` opens directly in Illustrator and looks exact, but each line comes in as its own text object.
 - `<stem>.pdf` embeds the fonts under their real Montserrat names, ready to drop into a proposal, Word or LaTeX.
-- `<stem>.png` and `<stem>_grayscale.png` are previews.
+- `<stem>.png` and `<stem>_grayscale.png` are previews. For a screen job, `<stem>.png` is the finished file at exactly the artboard's pixel size.
+- `assets/` holds the photos and logos the `.jsx` links to. It has to stay next to the `.jsx`.
 
 Documents are RGB with global swatches. For offset print, a designer would switch to `brand/swatches/NMSU_CMYK.ase` and confirm the crimson with the printer, as NMSU asks.
 
@@ -87,7 +89,7 @@ These come from NMSU's brand rules, and `BRAND.md` has the citations. When a req
 - **The tagline in anything but Gotham, or without the logo.** We only use it inside a provided setup file.
 - **AI-generated or AI-modified photos of campus.** NMSU's FAQ says no. Requesters need genuine photography.
 
-`publish()` doesn't place logos yet, so a logo goes in by hand in Illustrator, following the clear-space and minimum-size rules in `BRAND.md`. Standalone pieces like flyers, posters and one-pagers need the logo and the full name "New Mexico State University". A figure that goes inside a larger NMSU document doesn't need its own logo.
+`Logo` places the two vertical setups in `brand/logos/` exactly as provided. The lint holds every placement to NMSU's clear space (the height of the S in "State"), minimum size, and the right version for its background. The standalone mark (`nmsu-mark-white.svg`) isn't wired up yet, because its file carries Illustrator's private data, so it still goes in by hand. Standalone pieces like flyers, posters and one-pagers need the logo and the full name "New Mexico State University". A figure that goes inside a larger NMSU document doesn't need its own logo.
 
 ## Keeping requesters' material private
 
@@ -97,12 +99,13 @@ Jobs often hold unpublished material: grant proposals, internal org charts, peop
 
 - **Illustrator never runs here.** `tools/illustrator_mock.js` holds the `.jsx` to our model of Illustrator's scripting API, and `publish()` requires the mock's redraw to match the SVG under both artboard coordinate conventions. If someone reports that a `.jsx` fails in real Illustrator, the mock was wrong. We get the exact error message, fix the mock to match what Illustrator actually did, watch publish go red, and then fix the emitter.
 - **Renders only see the repo's fonts.** `export.font_env()` gives Inkscape a private fontconfig that only knows `brand/fonts/`, so the lint and the renderer measure the same font files whatever is installed system-wide.
-- **Tests and types.** Run `.venv/bin/pytest` and `.venv/bin/mypy` (strict). `typings/` holds exact stubs for the slices of uharfbuzz and fontTools we call. When the toolkit needs more of those libraries, we extend the stubs; we don't add `Any`, `type: ignore` or `ignore_missing_imports`.
+- **Tests and types.** Run `.venv/bin/pytest` and `.venv/bin/mypy` (strict). Every job's script is named `build.py`, so mypy can't take them in one run; `tests/test_types.py` type-checks each job separately. `typings/` holds exact stubs for the slices of uharfbuzz and fontTools we call. When the toolkit needs more of those libraries, we extend the stubs; we don't add `Any`, `type: ignore` or `ignore_missing_imports`.
+- **Photos and QR codes.** Text never sits on a photo, because its contrast can't be checked there. A photo can't be stretched. Every QR code is scanned straight off the render and has to open exactly the address it was built with.
 - **Every rule needs a test.** Each test in `tests/test_rules.py` should fail when its rule is loosened. When we add a rule, we add the piece of slop that proves it bites.
 
 ## Growing the toolkit
 
-When a job needs something the toolkit doesn't have yet, we add it to `nmsu/` once rather than drawing it inline in the job. That covers things like a new shape, a table, or logo placement. Two jobs drawing the same thing two different ways is exactly how drift starts. A new primitive needs four things:
+When a job needs something the toolkit doesn't have yet, we add it to `nmsu/` once rather than drawing it inline in the job. That covers things like a new shape, a table, or left-aligned text. Two jobs drawing the same thing two different ways is exactly how drift starts. A new primitive needs four things:
 
 - an SVG emitter
 - an Illustrator emitter
@@ -111,7 +114,8 @@ When a job needs something the toolkit doesn't have yet, we add it to `nmsu/` on
 
 Known gaps right now:
 
-- logo placement
+- placing the standalone NMSU mark (the two vertical setups work)
+- left-aligned text, since every `Text` is centered
 - multi-page and InDesign output
 - native CMYK documents
 - any use of Open Sans, which the toolkit stores but doesn't set anything in
@@ -121,8 +125,8 @@ Known gaps right now:
 ```sh
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest                         # 7 passed means the whole toolchain works
+.venv/bin/pytest                         # all passing means the whole toolchain works
 .venv/bin/python -m nmsu.swatches        # after any palette change
 ```
 
-`publish()` also needs `inkscape`, `node` and ImageMagick's `magick` on `PATH`. On a Mac that's `brew install python node imagemagick` and `brew install --cask inkscape`. So far the repo has only been run on Linux, so on a new machine the first `pytest` run is the real check.
+`publish()` also needs `inkscape`, `node` and ImageMagick's `magick` on `PATH`, and the repo needs Git LFS. On a Mac that's `brew install python node imagemagick git-lfs`, `brew install --cask inkscape`, then `git lfs install`. So far the repo has only been run on Linux, so on a new machine the first `pytest` run is the real check.

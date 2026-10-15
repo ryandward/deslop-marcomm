@@ -20,6 +20,10 @@ The only content change was one spelling fix, "Liasson" to "Liaison". Everything
 - three type sizes, which is what NMSU asks for
 - every line of text measured to fit its box
 
+It works from a brief too. A request for a 1920 x 1080 Fall Commencement welcome screen came in as a paragraph of copy, a zip of graphics and a commencement photo, and this is what came back, with the logo, the hashtag and a QR code that opens commencement.nmsu.edu:
+
+![Fall 2026 Commencement welcome screen](jobs/commencement-welcome-fall-2026/out/Commencement_Welcome_Fall2026.png)
+
 ## What you get back
 
 Every request ends up in its own folder under `jobs/`, with the original in `source/` and these files in `out/`:
@@ -27,7 +31,8 @@ Every request ends up in its own folder under `jobs/`, with the original in `sou
 - **An Illustrator build script (`.jsx`).** This is the one to use. In Illustrator, choose File > Scripts > Other Script... and pick it, and Illustrator builds a native document. The document has NMSU colors as global swatches, named layers, each box grouped with its text, and live centered type. Save As `.ai` and you're editing normally. If your machine has Gotham, open the `.jsx` in a text editor first and change `PREFER_GOTHAM = false` to `true`.
 - **An SVG.** It opens straight in Illustrator and looks exactly right, but each line of text comes in as its own object.
 - **A PDF.** It's ready to drop into a proposal, a Word document or a slide.
-- **PNG previews,** including a grayscale one for NMSU's black-and-white check.
+- **PNG previews,** including a grayscale one for NMSU's black-and-white check. For screens and digital signage, the PNG is the finished file at exactly the size asked for.
+- **An `assets` folder** with any photo and logo the Illustrator script links to. Keep it next to the `.jsx`.
 
 ## What gets checked before anything comes out
 
@@ -39,6 +44,9 @@ Each check comes from the brand site, and if any of them fails, no files get wri
 - **Two or three type sizes,** and the same limit for weights.
 - **Readable contrast.** Every line of text meets accessibility contrast against whatever sits behind it.
 - **No overflow.** No text spills out of its box.
+- **The logo is placed right.** It gets its full clear space (the height of the S in "State"), meets NMSU's minimum size, and uses the version that matches its background.
+- **Photos aren't stretched or written over.** Text never sits on top of a photo.
+- **The QR code works.** Every QR code is scanned straight off the finished image and has to open exactly the right address.
 - **The Illustrator script matches.** It draws the same picture as the preview.
 
 When a check fails, Claude has to change the design. The rules themselves only change when MarComm says so (see "Making it MarComm's" below).
@@ -50,9 +58,11 @@ On a Mac:
 1. Install [Homebrew](https://brew.sh) if it isn't there yet.
 2. In Terminal, run:
    ```sh
-   brew install python node imagemagick
+   brew install python node imagemagick git-lfs
    brew install --cask inkscape
+   git lfs install
    ```
+   Git LFS keeps the large photos and files people send in separate storage, so the repo stays quick to clone. Run `git lfs install` before cloning, or those files arrive as small placeholder text files.
    Then open Inkscape once from Applications so macOS will let it run.
 3. Install Claude Code. You can use the [desktop app](https://code.claude.com/docs/en/overview) (sign in, then use the **Code** tab), or the terminal version:
    ```sh
@@ -66,7 +76,7 @@ On a Mac:
    .venv/bin/pip install -e ".[dev]"
    .venv/bin/pytest
    ```
-   The last command should end with `7 passed`. That run builds and checks real files, so passing means everything is wired up.
+   The last command should end with `passed` and no failures. That run builds and checks real files, so passing means everything is wired up.
 
 If any step fails, open Claude Code in the `deslop-marcomm` folder and paste in the error. The instructions it reads from `CLAUDE.md` include the setup. Windows works too with the same tools, and Claude can walk you through it.
 
@@ -87,7 +97,7 @@ If any step fails, open Claude Code in the `deslop-marcomm` folder and paste in 
 
 ## What it doesn't do yet
 
-- **Logos.** Claude doesn't place the logo. Add it in Illustrator from `brand/logos/` or your Brand Portal files, keeping the clear space and minimum size.
+- **The standalone mark.** Claude places the two vertical logo setups, but not the NM State mark on its own yet. Add that one in Illustrator, keeping the clear space and minimum size.
 - **Multi-page documents.** Only single-page graphics are supported, so nothing for InDesign. Reports and decks are better started from NMSU's Word and PowerPoint templates.
 - **Running Illustrator.** Claude doesn't run Illustrator itself. The `.jsx` is checked against a stand-in for Illustrator's scripting. If it ever throws an error in the real Illustrator, give Claude the exact message, and it knows how to fix the stand-in and the script together.
 

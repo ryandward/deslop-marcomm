@@ -12,6 +12,7 @@
 //   cc      artboardRect [0, 0, W, -H]  (Illustrator CS6 and later)
 //   legacy  artboardRect [0, H, W, 0]   (older documents and versions)
 const fs = require("fs");
+const path = require("path");
 const vm = require("vm");
 const [jsxPath, outPath, mode = "cc"] = process.argv.slice(2);
 
@@ -55,7 +56,19 @@ function pathItem(points, closed) {
 function container(label) {
   const items = [];
   const c = { name: "", items, locked: false };
-  c.groupItems = strict({ add() { const g = strict({ kind: "group", ...container("GroupItem") }, "GroupItem"); items.push(g); return g; } }, "GroupItems");
+  c.groupItems = strict({
+    add() { const g = strict({ kind: "group", ...container("GroupItem") }, "GroupItem"); items.push(g); return g; },
+    // Illustrator imports the file as vector art; the script then sizes and positions it.
+    createFromFile(file) {
+      if (!file.exists) throw new Error("createFromFile: no such file " + file.fsName);
+      const g = strict({ kind: "imported", name: "", file, width: 0, height: 0, position: [0, 0] }, "GroupItem(file)");
+      items.push(g); return g;
+    },
+  }, "GroupItems");
+  c.placedItems = strict({ add() {
+    const p = strict({ kind: "placed", name: "", file: null, width: 0, height: 0, position: [0, 0] }, "PlacedItem");
+    items.push(p); return p;
+  } }, "PlacedItems");
   const rect = (top, left, w, h, r) => {
     const p = pathItem([[left, top], [left + w, top], [left + w, top - h], [left, top - h]], true);
     p.kind = "rect"; p.r = r || 0; items.push(p); return p;
@@ -94,6 +107,12 @@ function container(label) {
   return c;
 }
 
+ctx.$ = strict({ fileName: path.resolve(jsxPath) }, "$");
+ctx.File = function (p) {
+  const abs = path.resolve(String(p));
+  return strict({ fsName: abs, exists: fs.existsSync(abs), parent: strict({ fsName: path.dirname(abs) }, "Folder") }, "File");
+};
+
 ctx.app = strict({
   coordinateSystem: "CoordinateSystem.ARTBOARDCOORDINATESYSTEM",
   documents: strict({ add(cs, w, h) {
@@ -129,10 +148,27 @@ const hex = (c) => {
 const paint = (p) => `fill="${p.filled ? hex(p.fillColor) : "none"}"` +
   (p.stroked ? ` stroke="${hex(p.strokeColor)}" stroke-width="${p.strokeWidth}" stroke-linejoin="round"` : "");
 const out = [];
-let counts = { rect: 0, path: 0, ellipse: 0, text: 0, group: 0 };
+let counts = { rect: 0, path: 0, ellipse: 0, text: 0, group: 0, placed: 0, imported: 0 };
 function emit(it) {
   counts[it.kind === "layer" ? "group" : it.kind]++;
   if (it.kind === "group" || it.kind === "layer") { out.push(`<g data-name="${it.name}">`); it.items.forEach(emit); out.push("</g>"); return; }
+  if (it.kind === "placed" || it.kind === "imported") {
+    if (!it.file) throw new Error("placed item without a file: " + it.name);
+    const [l, t] = it.position;
+    const box = `x="${X(l)}" y="${Y(t)}" width="${it.width}" height="${it.height}" preserveAspectRatio="none"`;
+    if (it.kind === "imported" && it.file.fsName.endsWith(".svg")) {
+      // createFromFile brings an SVG in as vector art, so draw it as vector
+      // art too: the file's own <svg>, nested and sized to the item's box.
+      const text = fs.readFileSync(it.file.fsName, "utf8");
+      if (/<!ENTITY/.test(text)) throw new Error("mock can't nest an SVG that declares entities: " + it.file.fsName);
+      const body = text.replace(/<\?xml[^>]*\?>/, "").replace(/<!DOCTYPE[^>]*>/, "");
+      out.push(body.replace(/<svg\b[^>]*>/, (tag) =>
+        tag.replace(/\s(x|y|width|height|preserveAspectRatio)="[^"]*"/g, "").replace(/^<svg/, `<svg ${box}`)));
+      return;
+    }
+    out.push(`<image ${box} href="${it.file.fsName}"/>`);
+    return;
+  }
   if (it.kind === "rect") {
     const [l, t] = it.pts[0], [r, b] = it.pts[2];
     out.push(`<rect x="${X(l)}" y="${Y(t)}" width="${(r - l).toFixed(2)}" height="${(t - b).toFixed(2)}" rx="${it.r}" ${paint(it)}/>`);

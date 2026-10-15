@@ -55,6 +55,8 @@ How the lint reads NMSU's color rules:
 
 These are the copies NMSU serves for its own website from `https://source.nmsu.edu/assets/svg/logos/`. The official print files and unit setups live on the NMSU Brand Portal (https://eltnmsu.sharepoint.com/sites/Brand-Portal/, NMSU login). When someone gets those, they go in `brand/logos/portal/` and take priority for print. NMSU's terms are that downloading the marks means agreeing to follow its brand guidelines.
 
+The toolkit places the two vertical setups with `Logo`. publish ships a copy of the file in `out/assets/` whose canvas is trimmed to the artwork, so Illustrator, the SVG and the checks all measure the same box. The artwork itself is untouched. For clear space, the S in "State" measures 25.3 of the crimson setup's 213.89 units of height, and 12.2 of the white setup's 88.4.
+
 NMSU's logo files use crimson `#8C1844`, not the palette's `#8C0B42`. "Don't change the color of the NMSU logo," so we never recolor them to match.
 
 The rules NMSU gives for the logo:
@@ -69,6 +71,13 @@ The rules NMSU gives for the logo:
 - Co-branding with partner logos goes to Marketing and Communications for review. As a partner logo, the NMSU mark appears uncombined and unaltered.
 - **Restricted marks we never use:** the seal (Board of Regents and Office of the President only), the Classic Aggie (restricted by a licensing agreement with Oklahoma State), the athletics marks (protected, with their own crimson), and the stationery mark (official letterhead, envelopes and business cards only).
 
+How the lint holds logo placements to those rules:
+
+- **Clear space.** Nothing may come within one S-height of the logo, except the background it sits on.
+- **Minimum size.** The logo has to meet the minimum for the medium. A screen job (`Medium.SCREEN`) works in pixels, and a print job in points.
+- **The right version.** The white version goes on dark backgrounds (relative luminance under 0.25) and the crimson one on light backgrounds. The logo's main color also has to reach 3:1 against what's behind it (**house rule**).
+- **A solid background.** The logo never sits on a photo.
+
 ## Tagline
 
 "BE BOLD. Shape the Future.®" is a registered trademark. It always carries the ®, sets "BE BOLD." in Gotham Black and "Shape the Future." in Gotham Medium, stays on one line, and never appears without the logo, in another font, with changed punctuation, or on a curve. Since we don't have Gotham, we only ever use the tagline as part of a provided logo setup file.
@@ -76,6 +85,20 @@ The rules NMSU gives for the logo:
 ## Photography
 
 NMSU's FAQ says not to use AI to create or modify photos or videos of campus locations, and to use genuine photography instead. Any AI-made campus imagery in a source gets dropped, and the requester gets told why.
+
+Two **house rules** cover photos:
+
+- A photo keeps its proportions; a stretched photo is refused.
+- Text never sits on a photo, because contrast can't be guaranteed there.
+
+## QR codes and screens
+
+These are **house rules**:
+
+- **Quiet zone.** QR codes carry the full four-module quiet zone the QR standard requires.
+- **Error correction.** They use level Q (25%), for screens seen at an angle.
+- **They have to scan.** Each one gets scanned off the render and has to open exactly its address.
+- **Minimum text size.** Screen text is at least 16 px, and print text at least 7 pt.
 
 ## Templates and contacts
 

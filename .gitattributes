@@ -1,0 +1,6 @@
+# Everything a requester sends us (photos, Illustrator files, zips, decks)
+# goes to Git LFS, so the repo stays small to clone. The plain-text briefs we
+# write down ourselves stay in regular git, where changes to them show up in diffs.
+jobs/*/source/** filter=lfs diff=lfs merge=lfs -text
+jobs/*/source/**/*.md !filter !diff !merge text
+jobs/*/source/**/*.txt !filter !diff !merge text

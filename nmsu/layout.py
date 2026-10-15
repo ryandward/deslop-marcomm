@@ -9,11 +9,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import cache
+from pathlib import Path as FilePath
 
+import segno
 import uharfbuzz as hb
 from fontTools.ttLib import TTFont
+from PIL import Image as PILImage
 
-from .brand import FIT_MARGIN, Paint, Style
+from .brand import BLACK, FIT_MARGIN, QR_QUIET_MODULES, WHITE_SANDS, LogoArt, Paint, Style
 
 
 # --------------------------------------------------------- measurement ----
@@ -164,6 +167,85 @@ class Text:
 
 
 @dataclass
+class Image:
+    """A raster photo or graphic drawn at x, y, w, h. It has to keep the
+    file's proportions: a stretched photo is refused the moment it's built."""
+    name: str
+    file: FilePath
+    x: float
+    y: float
+    w: float
+    h: float
+
+    def __post_init__(self) -> None:
+        with PILImage.open(self.file) as im:
+            pw, ph = im.size
+        if abs((self.w / self.h) / (pw / ph) - 1) > 0.005:
+            raise ValueError(f"{self.name}: {self.w:g} x {self.h:g} would stretch a {pw} x {ph} image")
+
+
+@dataclass
+class Logo:
+    """An NMSU logo file, placed as provided with its artwork's top-left at
+    x, y and its artwork h tall. Width follows from the artwork's proportions."""
+    name: str
+    art: LogoArt
+    x: float
+    y: float
+    h: float
+
+    @property
+    def w(self) -> float:
+        return self.h * self.art.aspect
+
+    @property
+    def clear_space(self) -> float:
+        """The height of the S in "State" at this size."""
+        return self.art.s_height * self.h / self.art.box[3]
+
+
+@dataclass
+class QRCode:
+    """A QR code and its quiet zone, drawn as plain rectangles so it stays
+    vector in every output. module is one module's size in artboard units;
+    on screens, keep it and x, y whole pixels so modules land on the pixel
+    grid. Error correction is Q (25%), for screens seen at an angle."""
+    name: str
+    data: str
+    x: float
+    y: float
+    module: float
+    paint: Paint = field(default_factory=lambda: Paint(BLACK))
+    background: Paint = field(default_factory=lambda: Paint(WHITE_SANDS))
+    matrix: list[list[bool]] = field(init=False)
+
+    def __post_init__(self) -> None:
+        qr = segno.make_qr(self.data, error="q", boost_error=False)
+        self.matrix = [[bool(v) for v in row] for row in qr.matrix]
+
+    @property
+    def size(self) -> float:
+        return (len(self.matrix) + 2 * QR_QUIET_MODULES) * self.module
+
+    def rects(self) -> list[Rect]:
+        """The quiet zone, then one rectangle per horizontal run of dark modules."""
+        m, q = self.module, QR_QUIET_MODULES
+        out = [Rect("quiet zone", self.x, self.y, self.size, self.size, fill=self.background)]
+        for r, row in enumerate(self.matrix):
+            c = 0
+            while c < len(row):
+                if not row[c]:
+                    c += 1
+                    continue
+                start = c
+                while c < len(row) and row[c]:
+                    c += 1
+                out.append(Rect(f"modules {r + 1}.{start + 1}", self.x + (q + start) * m, self.y + (q + r) * m,
+                                (c - start) * m, m, fill=self.paint))
+        return out
+
+
+@dataclass
 class Group:
     name: str
     items: list[Item]
@@ -171,7 +253,8 @@ class Group:
     locked: bool = False
 
 
-Item = Rect | Circle | Path | Text | Group
+Leaf = Rect | Circle | Path | Text | Image | Logo | QRCode
+Item = Leaf | Group
 
 
 # ------------------------------------------------------------- helpers ----
