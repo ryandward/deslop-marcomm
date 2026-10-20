@@ -13,7 +13,7 @@ from PIL import Image as PILImage
 from nmsu.brand import (AGGIE_CRIMSON, AZURE_SKY, BLACK, DESERT_MONSOON, DESERT_SAND, LOGO_SETUP_CRIMSON,
                         LOGO_SETUP_WHITE, SAGEBRUSH_MINT, WHITE_SANDS, Medium, Paint, Style, Swatch, Tier)
 from nmsu.export import publish
-from nmsu.layout import Group, Image, Logo, Overflow, QRCode, Rect, Text, text_width
+from nmsu.layout import Group, Image, Logo, Overflow, PhotoSlot, QRCode, Rect, Text, text_width
 from nmsu.lint import BrandViolation, lint_model
 
 CRIMSON_BODY = Style(500, 9, 11, Paint(AGGIE_CRIMSON))
@@ -90,7 +90,7 @@ def test_publish_accepts_an_on_brand_design(tmp_path: FilePath) -> None:
 SCREEN_TEXT = Style(700, 32, 40, Paint(AGGIE_CRIMSON))
 
 
-def photo(tmp_path: FilePath, w: int = 40, h: int = 60) -> FilePath:
+def photo(tmp_path: FilePath, w: int = 400, h: int = 600) -> FilePath:
     path = tmp_path / "photo.png"
     PILImage.new("RGBA", (w, h), (90, 90, 90, 255)).save(path)
     return path
@@ -122,6 +122,29 @@ def test_logo_under_the_screen_minimum_is_flagged() -> None:
 def test_stretched_photo_is_refused(tmp_path: FilePath) -> None:
     with pytest.raises(ValueError, match="stretch"):
         Image("photo", photo(tmp_path, 40, 60), 0, 0, 80, 60)
+
+
+def test_low_resolution_photo_in_print_is_flagged_unless_marked_fpo(tmp_path: FilePath) -> None:
+    # 400 px across 4 in is 100 ppi: fine on a phone, soft on paper.
+    small = photo(tmp_path)
+    caption = Text("t", ["Caption"], 600, 400, CRIMSON_BODY, 260)
+    assert rules_for([Group("Slop", [Image("photo", small, 0, 0, 288, 432), caption])],
+                     Medium.PRINT) == {"image-resolution"}
+    assert rules_for([Group("Draft", [Image("photo", small, 0, 0, 288, 432, fpo=True), caption])],
+                     Medium.PRINT) == set()
+
+
+def test_text_over_a_photo_slot_is_flagged() -> None:
+    slot = PhotoSlot("Photo 1", 100, 50, 200, 300)
+    assert rules_for([Group("Slop", [slot, Text("t", ["Congrats"], 200, 200, SCREEN_TEXT, 190)])]) \
+        == {"text-over-image"}
+
+
+def test_photo_slot_placeholders_do_not_count_as_crimson() -> None:
+    # The slot's crimson tint goes away when a photo fills it.
+    layers = [Group("Slop", [PhotoSlot("Photo 1", 100, 50, 200, 300),
+                             Text("t", ["Hello"], 600, 400, Style(700, 32, 40, Paint(BLACK)), 300)])]
+    assert rules_for(layers) == {"crimson-present"}
 
 
 def test_text_over_a_photo_is_flagged(tmp_path: FilePath) -> None:

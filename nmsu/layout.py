@@ -16,7 +16,7 @@ import uharfbuzz as hb
 from fontTools.ttLib import TTFont
 from PIL import Image as PILImage
 
-from .brand import BLACK, FIT_MARGIN, QR_QUIET_MODULES, WHITE_SANDS, LogoArt, Paint, Style
+from .brand import AGGIE_CRIMSON, BLACK, FIT_MARGIN, QR_QUIET_MODULES, WHITE_SANDS, LogoArt, Paint, Style
 
 
 # --------------------------------------------------------- measurement ----
@@ -169,19 +169,58 @@ class Text:
 @dataclass
 class Image:
     """A raster photo or graphic drawn at x, y, w, h. It has to keep the
-    file's proportions: a stretched photo is refused the moment it's built."""
+    file's proportions: a stretched photo is refused the moment it's built.
+
+    fpo marks a stand-in, "for position only": a file too small for the
+    medium that a designer swaps for the real one before the piece goes out.
+    The resolution floor doesn't apply to it, publish lists it in its report,
+    and its name in Illustrator starts with "FPO"."""
     name: str
     file: FilePath
     x: float
     y: float
     w: float
     h: float
+    fpo: bool = False
+    px: tuple[int, int] = field(init=False)
 
     def __post_init__(self) -> None:
         with PILImage.open(self.file) as im:
-            pw, ph = im.size
+            self.px = im.size
+        pw, ph = self.px
         if abs((self.w / self.h) / (pw / ph) - 1) > 0.005:
             raise ValueError(f"{self.name}: {self.w:g} x {self.h:g} would stretch a {pw} x {ph} image")
+
+    @property
+    def density(self) -> float:
+        """Image pixels per artboard unit at this size (x 72 for ppi in print)."""
+        return self.px[0] / self.w
+
+    @property
+    def label(self) -> str:
+        return f"FPO - {self.name}" if self.fpo else self.name
+
+
+@dataclass
+class PhotoSlot:
+    """An empty frame for a photo we don't have yet, drawn the way designers
+    draw placeholders: a light box with an X through it. In Illustrator it's
+    a group whose frame rectangle can become the photo's clipping mask.
+
+    The lint treats it as the photo it will become: nothing may sit on it,
+    and its placeholder colors don't count toward the page's color."""
+    name: str
+    x: float
+    y: float
+    w: float
+    h: float
+
+    def parts(self) -> list[Rect | Path]:
+        x0, y0, x1, y1 = self.x, self.y, self.x + self.w, self.y + self.h
+        line = Paint(AGGIE_CRIMSON, 30)
+        return [Rect("frame", x0, y0, self.w, self.h, fill=Paint(AGGIE_CRIMSON, 8)),
+                Path("placeholder", [(x0, y0), (x1, y1)], stroke=line, sw=1),
+                Path("placeholder", [(x1, y0), (x0, y1)], stroke=line, sw=1)]
 
 
 @dataclass
@@ -253,8 +292,10 @@ class Group:
     locked: bool = False
 
 
-Leaf = Rect | Circle | Path | Text | Image | Logo | QRCode
+Leaf = Rect | Circle | Path | Text | Image | PhotoSlot | Logo | QRCode
 Item = Leaf | Group
+# What ends up as a photo on the page, now or once a designer fills it.
+Picture = Image | PhotoSlot
 
 
 # ------------------------------------------------------------- helpers ----

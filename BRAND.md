@@ -86,10 +86,12 @@ How the lint holds logo placements to those rules:
 
 NMSU's FAQ says not to use AI to create or modify photos or videos of campus locations, and to use genuine photography instead. Any AI-made campus imagery in a source gets dropped, and the requester gets told why.
 
-Two **house rules** cover photos:
+These **house rules** cover photos:
 
 - A photo keeps its proportions; a stretched photo is refused.
 - Text never sits on a photo, because contrast can't be guaranteed there.
+- A photo or raster graphic is at least 300 ppi at its printed size, and a screen never shows one larger than its own pixels. A file that's too small can still hold its place as a stand-in marked FPO ("for position only"), which publish lists and Illustrator names, until a designer swaps in the real file.
+- An empty photo slot follows the same rules as the photo it will hold, and its placeholder tint doesn't count as crimson on the page.
 
 ## QR codes and screens
 

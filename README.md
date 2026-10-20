@@ -34,6 +34,8 @@ Every request ends up in its own folder under `jobs/`, with the original in `sou
 - **PNG previews,** including a grayscale one for NMSU's black-and-white check. For screens and digital signage, the PNG is the finished file at exactly the size asked for.
 - **An `assets` folder** with any photo and logo the Illustrator script links to. Keep it next to the `.jsx`.
 
+When a brief leaves room for photos nobody has sent yet, the design gets empty photo frames (a light box with an X), sized and named in Illustrator so a designer can drop photos in. The Illustrator script explains how at the top.
+
 ## What gets checked before anything comes out
 
 Each check comes from the brand site, and if any of them fails, no files get written:
@@ -45,7 +47,7 @@ Each check comes from the brand site, and if any of them fails, no files get wri
 - **Readable contrast.** Every line of text meets accessibility contrast against whatever sits behind it.
 - **No overflow.** No text spills out of its box.
 - **The logo is placed right.** It gets its full clear space (the height of the S in "State"), meets NMSU's minimum size, and uses the version that matches its background.
-- **Photos aren't stretched or written over.** Text never sits on top of a photo.
+- **Photos aren't stretched or written over, and they're sharp enough.** Text never sits on top of a photo, and print photos are 300 ppi at their printed size. A file that's too small can still hold its place, but it's marked FPO ("for position only") so nobody prints it by accident.
 - **The QR code works.** Every QR code is scanned straight off the finished image and has to open exactly the right address.
 - **The Illustrator script matches.** It draws the same picture as the preview.
 

@@ -8,6 +8,12 @@
 // Colors are global process swatches in an "NMSU Brand" swatch group, so
 // recoloring a swatch recolors everything that uses it, and light fills
 // are tints of those swatches. Each box and its text are grouped and named.
+//
+// A photo slot is a group with a light frame and an X. To fill it, place
+// the photo, move it under the frame, delete the X, select the photo and
+// the frame, and choose Object > Clipping Mask > Make. A placed image whose
+// name starts with "FPO" is a low-resolution stand-in: relink it to the
+// final file (Links panel > Relink) before the piece goes out.
 
 // Set to true on a machine that has Gotham (NMSU's primary typeface).
 // Otherwise Montserrat is used, which NMSU approves as its substitute.

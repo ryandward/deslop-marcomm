@@ -20,7 +20,7 @@ from pathlib import Path as FilePath
 from xml.sax.saxutils import escape
 
 from .brand import FONT_DIR, GOTHAM_FOR, PALETTE, ROOT, WHITE_SANDS, LogoArt, Medium, Paint, Swatch
-from .layout import Circle, Group, Image, Item, Logo, Path, QRCode, Rect, Text, text_width
+from .layout import Circle, Group, Image, Item, Logo, Path, PhotoSlot, QRCode, Rect, Text, text_width
 from .lint import BrandViolation, Finding, flatten, lint_model, lint_render
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@ def _svg_item(it: Item, depth: int) -> list[str]:
     if isinstance(it, Image):
         # Embedded, so the SVG is one self-contained file to hand over.
         data = base64.b64encode(it.file.read_bytes()).decode()
-        return [f'{pad}<image id="{_id(it.name)}" x="{it.x:.2f}" y="{it.y:.2f}" width="{it.w:.2f}" '
+        return [f'{pad}<image id="{_id(it.label)}" x="{it.x:.2f}" y="{it.y:.2f}" width="{it.w:.2f}" '
                 f'height="{it.h:.2f}" preserveAspectRatio="none" xlink:href="data:image/png;base64,{data}"/>']
     if isinstance(it, Logo):
         bx, by, _, bh = it.art.box
@@ -75,6 +75,11 @@ def _svg_item(it: Item, depth: int) -> list[str]:
         out = [f'{pad}<g id="{_id(it.name)}">']
         for module_run in it.rects():
             out += _svg_item(module_run, depth + 1)
+        return out + [f"{pad}</g>"]
+    if isinstance(it, PhotoSlot):
+        out = [f'{pad}<g id="{_id(it.name)}">']
+        for part in it.parts():
+            out += _svg_item(part, depth + 1)
         return out + [f"{pad}</g>"]
     # Each line is its own <text> at a measured left edge, so every renderer,
     # Illustrator included, puts it exactly where the lint measured it.
@@ -147,6 +152,12 @@ JSX_TEMPLATE = r"""//@target illustrator
 // Colors are global process swatches in an "NMSU Brand" swatch group, so
 // recoloring a swatch recolors everything that uses it, and light fills
 // are tints of those swatches. Each box and its text are grouped and named.
+//
+// A photo slot is a group with a light frame and an X. To fill it, place
+// the photo, move it under the frame, delete the X, select the photo and
+// the frame, and choose Object > Clipping Mask > Make. A placed image whose
+// name starts with "FPO" is a low-resolution stand-in: relink it to the
+// final file (Links panel > Relink) before the piece goes out.
 
 // Set to true on a machine that has Gotham (NMSU's primary typeface).
 // Otherwise Montserrat is used, which NMSU approves as its substitute.
@@ -313,12 +324,14 @@ def _jsx_item(it: Item) -> dict[str, object]:
         return {"kind": "path", "name": it.name, "pts": [list(pt) for pt in it.pts], "closed": it.closed,
                 "fill": _paint_ref(it.fill), "stroke": _paint_ref(it.stroke), "sw": it.sw}
     if isinstance(it, Image):
-        return {"kind": "image", "name": it.name, "file": it.file.name, "x": it.x, "y": it.y, "w": it.w, "h": it.h}
+        return {"kind": "image", "name": it.label, "file": it.file.name, "x": it.x, "y": it.y, "w": it.w, "h": it.h}
     if isinstance(it, Logo):
         return {"kind": "logo", "name": it.name, "file": it.art.file.name, "x": it.x, "y": it.y,
                 "w": it.w, "h": it.h}
     if isinstance(it, QRCode):
         return {"kind": "group", "name": it.name, "items": [_jsx_item(r) for r in it.rects()]}
+    if isinstance(it, PhotoSlot):
+        return {"kind": "group", "name": it.name, "items": [_jsx_item(p) for p in it.parts()]}
     return {"kind": "text", "name": it.name, "lines": it.lines, "cx": it.cx, "y": it.y,
             "font": it.style.postscript, "size": it.style.size, "leads": it.leads(),
             "paint": _paint_ref(it.style.paint)}
@@ -500,5 +513,12 @@ def publish(layers: list[Group], *, width: float, height: float, out_dir: FilePa
     print(f"  contrast  lowest text contrast {model.min_contrast:.2f}:1")
     print("  color     " + ", ".join(f"{s.name.removeprefix('NMSU ')} {v:.0%}"
                                       for s, v in sorted(shares.items(), key=lambda kv: -kv[1])))
+    for _, it in flatten(layers):
+        if isinstance(it, Image) and it.fpo:
+            have = f"{it.density * 72:.0f} ppi" if medium is Medium.PRINT else f"{it.density:.2f} px per px"
+            print(f"  FPO       {it.name} is a stand-in at {have}; swap in the final file before it goes out")
+    slots = [it.name for _, it in flatten(layers) if isinstance(it, PhotoSlot)]
+    if slots:
+        print(f"  photos    {len(slots)} empty photo slots for a designer to fill")
     print("  verified  Illustrator script rebuilds the SVG on the DOM mock (both coordinate conventions)")
     print(f"  look at   {out_dir / (stem + '.png')} and {out_dir / (stem + '_grayscale.png')}")

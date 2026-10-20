@@ -178,6 +178,9 @@ class Medium(Enum):
 
 
 MIN_TEXT = {Medium.PRINT: 7.0, Medium.SCREEN: 16.0}   # HOUSE: 7 pt in print, 16 px on screens
+# HOUSE: image pixels per artboard unit. Print wants 300 ppi at final size
+# (300 px per 72 pt); a screen should never upscale a photo past 1 px per px.
+MIN_IMAGE_DENSITY = {Medium.PRINT: 300 / 72, Medium.SCREEN: 1.0}
 
 
 # ---------------------------------------------------------------- logos ----

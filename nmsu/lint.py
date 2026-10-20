@@ -18,11 +18,11 @@ import zxingcpp
 from PIL import Image as PILImage
 
 from .brand import (AGGIE_CRIMSON, CONTRAST_LARGE, CONTRAST_NORMAL, DARK_BACKGROUND, LARGE_BOLD_TEXT_PT,
-                    LARGE_TEXT_PT, LOGO_MIN_CONTRAST, LOGO_MIN_HEIGHT, MAX_TYPE_SIZES, MAX_TYPE_WEIGHTS, MIN_TEXT,
-                    TERTIARY_MAX_SHARE, WHITE_SANDS, Medium, Paint, Swatch, Tier, contrast_ratio, contrast_rgb,
+                    LARGE_TEXT_PT, LOGO_MIN_CONTRAST, LOGO_MIN_HEIGHT, MAX_TYPE_SIZES, MAX_TYPE_WEIGHTS,
+                    MIN_IMAGE_DENSITY, MIN_TEXT, TERTIARY_MAX_SHARE, WHITE_SANDS, Medium, Paint, Swatch, Tier, contrast_ratio, contrast_rgb,
                     relative_luminance)
-from .layout import (Circle, Group, Image, Item, Leaf, Logo, Path, QRCode, Rect, Text, cap_height,
-                     text_width)
+from .layout import (Circle, Group, Image, Item, Leaf, Logo, Path, PhotoSlot, Picture, QRCode, Rect, Text,
+                     cap_height, text_width)
 
 
 @dataclass(frozen=True)
@@ -78,7 +78,7 @@ def bbox(it: Leaf) -> Box:
     if isinstance(it, Text):
         half = max(text_width(line, it.style) for line in it.lines) / 2
         return (it.cx - half, it.y - cap_height(it.style), it.cx + half, it.last_baseline + 0.25 * it.style.size)
-    if isinstance(it, (Image, Logo)):
+    if isinstance(it, (Image, PhotoSlot, Logo)):
         return (it.x, it.y, it.x + it.w, it.y + it.h)
     if isinstance(it, QRCode):
         return (it.x, it.y, it.x + it.size, it.y + it.size)
@@ -114,7 +114,7 @@ def _contains(it: Leaf, x: float, y: float) -> bool:
             if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
                 inside = not inside
         return inside
-    if isinstance(it, (Image, Logo, QRCode)):
+    if isinstance(it, (Image, PhotoSlot, Logo, QRCode)):
         x0, y0, x1, y1 = bbox(it)
         return x0 <= x <= x1 and y0 <= y <= y1
     return False
@@ -155,7 +155,7 @@ def _lint_text(flat: list[tuple[str, Leaf]], i: int, where: str, t: Text, medium
             if under is None:
                 findings.append(Finding("no-background", where, f"nothing painted behind {line!r}"))
                 return worst
-            if isinstance(under, (Image, Logo)):
+            if isinstance(under, Picture | Logo):
                 findings.append(Finding("text-over-image", where,
                                         f"{line!r} sits on {under.name}; put text on a solid brand color, "
                                         f"where it stays readable and its contrast can be checked"))
@@ -213,6 +213,19 @@ def _lint_logo(flat: list[tuple[str, Leaf]], i: int, where: str, logo: Logo, med
                                     f"the height of the S in State)"))
 
 
+def _lint_resolution(where: str, im: Image, medium: Medium, findings: list[Finding]) -> None:
+    floor = MIN_IMAGE_DENSITY[medium]
+    if im.density >= floor:
+        return
+    if medium is Medium.PRINT:
+        have = f"{im.density * 72:.0f} ppi at this size, and print needs {floor * 72:.0f}"
+    else:
+        have = f"{im.density:.2f} image pixels per screen pixel, so the screen would upscale it"
+    findings.append(Finding("image-resolution", where,
+                            f"{im.file.name} is {have}. Get a larger file or the vector original, or "
+                            f"place it with fpo=True as a stand-in a designer will replace"))
+
+
 def lint_model(layers: list[Group], medium: Medium = Medium.PRINT) -> tuple[list[Finding], ModelReport]:
     findings: list[Finding] = []
     flat = flatten(layers)
@@ -233,6 +246,8 @@ def lint_model(layers: list[Group], medium: Medium = Medium.PRINT) -> tuple[list
             worst = min(worst, _lint_text(flat, i, where, it, medium, findings))
         elif isinstance(it, Logo):
             _lint_logo(flat, i, where, it, medium, findings)
+        elif isinstance(it, Image) and not it.fpo:
+            _lint_resolution(where, it, medium, findings)
 
     if not any(p.swatch == AGGIE_CRIMSON for p in paints_used(layers)):
         findings.append(Finding("crimson-present", "document", "Aggie Crimson must always be present"))
@@ -241,8 +256,8 @@ def lint_model(layers: list[Group], medium: Medium = Medium.PRINT) -> tuple[list
 
 def coverage(png: FilePath, layers: list[Group], width: float) -> dict[Swatch, float]:
     """Visible area per swatch in px, read off the render. A tint counts in
-    proportion to its strength. Photos and logos are masked out, since their
-    colors aren't ours to count. Anti-aliased edge pixels match no paint and
+    proportion to its strength. Photos, photo slots and logos are masked
+    out, since their colors aren't ours to count. Anti-aliased edge pixels match no paint and
     are left out, which undercounts thin text a little in every color."""
     paints = sorted(paints_used(layers), key=lambda p: (p.swatch.name, p.tint))
     colors = np.array([p.rgb for p in paints], dtype=np.int16)
@@ -250,7 +265,7 @@ def coverage(png: FilePath, layers: list[Group], width: float) -> dict[Swatch, f
     scale = img.shape[1] / width
     keep = np.ones(img.shape[:2], dtype=bool)
     for _, it in flatten(layers):
-        if isinstance(it, (Image, Logo)):
+        if isinstance(it, Picture | Logo):
             x0, y0, x1, y1 = (round(v * scale) for v in bbox(it))
             keep[max(y0, 0):max(y1, 0), max(x0, 0):max(x1, 0)] = False
     pixels = img[keep]

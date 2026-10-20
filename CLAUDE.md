@@ -28,7 +28,7 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
 ## Where things are
 
 - `nmsu/brand.py`: the palette, typefaces and rule thresholds, and the only place a color or font may come from
-- `nmsu/layout.py`: HarfBuzz text measurement plus the primitives `Rect`, `Circle`, `Path`, `Text`, `Image`, `Logo`, `QRCode`, `Group`, `arrow_down` and `centered_stack`
+- `nmsu/layout.py`: HarfBuzz text measurement plus the primitives `Rect`, `Circle`, `Path`, `Text`, `Image`, `PhotoSlot`, `Logo`, `QRCode`, `Group`, `arrow_down` and `centered_stack`
 - `nmsu/photo.py`: turns a requester's photo into a working copy we can place, without touching the original
 - `nmsu/lint.py`: the brand compiler
 - `nmsu/export.py`: the SVG writer, the Illustrator script writer, renders, and `publish()`
@@ -51,7 +51,7 @@ The CROWN chart shows how this plays out. Its first version put the BASIN-WE pla
    - When text is unreadable, we ask. We don't fill it in from context.
    - Never add content the source doesn't have, whether that's a tagline, an icon that implies meaning, or an extra box.
 3. Check the format before building. We build single-page graphics here (charts, diagrams, flowcharts, posters, flyers), and they come out as Illustrator material. Multi-page documents belong in InDesign, which this toolkit can't produce yet, and we say so rather than forcing it. Reports and slide decks should start from NMSU's official Word and PowerPoint templates (see `BRAND.md`).
-4. Write `build.py`. Use `jobs/crown-structure/build.py` as the pattern for print, and `jobs/commencement-welcome-fall-2026/build.py` for screens, logos, photos and QR codes:
+4. Write `build.py`. Use `jobs/crown-structure/build.py` as the pattern for print diagrams, `jobs/aces-shaping-futures-poster/build.py` for print posters with photo slots and an FPO image, and `jobs/commencement-welcome-fall-2026/build.py` for screens, logos, photos and QR codes:
    - content constants first
    - then a type scale of at most three sizes and three weights
    - then `build()`, which returns layers bottom to top
@@ -100,7 +100,7 @@ Jobs often hold unpublished material: grant proposals, internal org charts, peop
 - **Illustrator never runs here.** `tools/illustrator_mock.js` holds the `.jsx` to our model of Illustrator's scripting API, and `publish()` requires the mock's redraw to match the SVG under both artboard coordinate conventions. If someone reports that a `.jsx` fails in real Illustrator, the mock was wrong. We get the exact error message, fix the mock to match what Illustrator actually did, watch publish go red, and then fix the emitter.
 - **Renders only see the repo's fonts.** `export.font_env()` gives Inkscape a private fontconfig that only knows `brand/fonts/`, so the lint and the renderer measure the same font files whatever is installed system-wide.
 - **Tests and types.** Run `.venv/bin/pytest` and `.venv/bin/mypy` (strict). Every job's script is named `build.py`, so mypy can't take them in one run; `tests/test_types.py` type-checks each job separately. `typings/` holds exact stubs for the slices of uharfbuzz and fontTools we call. When the toolkit needs more of those libraries, we extend the stubs; we don't add `Any`, `type: ignore` or `ignore_missing_imports`.
-- **Photos and QR codes.** Text never sits on a photo, because its contrast can't be checked there. A photo can't be stretched. Every QR code is scanned straight off the render and has to open exactly the address it was built with.
+- **Photos and QR codes.** Text never sits on a photo, because its contrast can't be checked there. A photo can't be stretched, and it has to be sharp enough for the medium: 300 ppi at its printed size, or no upscaling on a screen. When the only file we have is too small, we place it with `fpo=True`, so publish lists it and Illustrator names it "FPO" until a designer swaps in the real file. When a request has room for photos we don't have, we draw `PhotoSlot`s, which the lint treats like the photos they'll become. Every QR code is scanned straight off the render and has to open exactly the address it was built with.
 - **Every rule needs a test.** Each test in `tests/test_rules.py` should fail when its rule is loosened. When we add a rule, we add the piece of slop that proves it bites.
 
 ## Growing the toolkit
